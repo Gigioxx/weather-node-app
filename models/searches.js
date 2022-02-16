@@ -10,11 +10,19 @@ class Searches {
 
     }
 
-    get ParamsMapbox() {
+    get paramsMapbox() {
         return {
             'access_token': process.env.MAPBOX_KEY,
             'limit': 5,
             'language': 'en'
+        }
+    }
+
+    get paramsOpenWeather() {
+        return {
+            'appid': process.env.OPENWEATHER_KEY,
+            'units': 'metric',
+            'lang': 'en'
         }
     }
 
@@ -24,7 +32,7 @@ class Searches {
             // http request
             const instance = axios.create({
                 baseURL: `https://api.mapbox.com/geocoding/v5/mapbox.places/${ place }.json`,
-                params: this.ParamsMapbox
+                params: this.paramsMapbox
             });
 
             const resp = await instance.get();
@@ -38,10 +46,31 @@ class Searches {
         } catch (error) {
             return [];
         }
-        
 
+    }
+    
+    async placeWeather( lat, lon ) {
 
-        return []; // return places
+        try {
+
+            const instance = axios.create({
+                baseURL: 'https://api.openweathermap.org/data/2.5/weather',
+                params: { ...this.paramsOpenWeather, lat, lon }
+            });
+
+            const resp = await instance.get();
+            const { weather, main } = resp.data;
+
+            return {
+                description: weather[0].description,
+                min: main.temp_min,
+                max: main.temp_max,
+                temp: main.temp
+            }
+
+        } catch (error) {
+            console.log( error );
+        }
 
     }
 
