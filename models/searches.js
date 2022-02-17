@@ -7,9 +7,18 @@ class Searches {
     dbPath = './db/database.json';
 
     constructor() {
+        this.readDB();
+    }
 
-        // Read DB if exists
+    get capitalizedHistory() {
+        return this.history.map( place => {
 
+            let words = place.split(' ');
+            words = words.map( w => w[0].toUpperCase() + w.substring(1) );
+
+            return words.join(' ');
+
+        });
     }
 
     get paramsMapbox() {
@@ -81,6 +90,8 @@ class Searches {
         if ( this.history.includes( place.toLowerCase() ) ) {
             return;
         }
+
+        this.history = this.history.splice(0,5);
         
         this.history.unshift( place.toLocaleLowerCase() );
 
@@ -98,6 +109,13 @@ class Searches {
     }
 
     readDB() {
+
+        if( !fs.existsSync( this.dbPath ) ) return;
+
+        const info = fs.readFileSync( this.dbPath, { encoding: 'utf-8' });
+        const data = JSON.parse( info );
+
+        this.history = data.history;
 
     }
 
