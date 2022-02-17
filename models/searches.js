@@ -1,8 +1,10 @@
+const fs = require('fs');
 const axios = require('axios');
 
 class Searches {
 
-    history = ['Santiago', 'New York', 'Madrid', 'Paris'];
+    history = [];
+    dbPath = './db/database.json';
 
     constructor() {
 
@@ -71,6 +73,31 @@ class Searches {
         } catch (error) {
             console.log( error );
         }
+
+    }
+
+    searchesHistory( place = '' ) {
+        
+        if ( this.history.includes( place.toLowerCase() ) ) {
+            return;
+        }
+        
+        this.history.unshift( place.toLocaleLowerCase() );
+
+        this.saveDB();
+
+    }
+
+    saveDB() {
+
+        const payload = {
+            history: this.history
+        };
+        
+        fs.writeFileSync( this.dbPath, JSON.stringify( payload ) );
+    }
+
+    readDB() {
 
     }
 

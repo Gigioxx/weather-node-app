@@ -23,7 +23,12 @@ const main = async() => {
                 
                 // Select place
                 const id = await listPlaces( places );
+                if ( id === '0' ) continue;
+                
                 const selectedPlace = places.find( place => place.id === id );
+
+                // Save in DB
+                searches.searchesHistory( selectedPlace.name );
 
                 // Weather info
                 const weather = await searches.placeWeather( selectedPlace.lat, selectedPlace.lng );
@@ -42,7 +47,11 @@ const main = async() => {
             break;
             
             case 2:
-                
+                searches.history.forEach( (place, i) => {
+                    const idx = `${ i + 1 }.`.green;
+                    console.log( `${ idx } ${ place }` );
+                });    
+
             break;
 
         }
